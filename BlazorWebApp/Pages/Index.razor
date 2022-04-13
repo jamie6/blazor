@@ -1,7 +1,63 @@
 ﻿@page "/"
+@implements IAsyncDisposable
+@inject IJSRuntime JS
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+Hi there, guy
+
+<button @onclick="ShowAlert"></button>
+
+
+
+@code {
+    private IJSObjectReference? module;
+    private string? result;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            module = await JS.InvokeAsync<IJSObjectReference>("import",
+                "./scripts.js");
+            /*var module = await JS.InvokeAsync<IJSObjectReference>(
+    "import", "./_content/ComponentLibrary/scripts.js");*/
+        }
+    }
+
+    private async Task TriggerPrompt()
+    {
+        result = await Prompt("Provide some text");
+    }
+
+    public async ValueTask<string?> Prompt(string message) =>
+        module is not null ?
+            await module.InvokeAsync<string>("showPrompt", message) : null;
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        if (module is not null)
+        {
+            await module.DisposeAsync();
+        }
+    }
+
+
+    public async void ShowAlert()
+    {
+        module = await JS.InvokeAsync<IJSObjectReference>("import",
+                "./scripts.js");
+
+        await module.InvokeAsync<string>("showPrompt", "hello");
+
+        Console.WriteLine("hello");
+        //var promptObject = await this.JS.InvokeAsync<IJSObjectReference>("common.getPromptInstance");
+        //await promptObject.InvokeVoidAsync("showAlert");
+
+        //var module = await JS.InvokeAsync<IJSObjectReference>("import", "./Example.js");
+    }
+}
