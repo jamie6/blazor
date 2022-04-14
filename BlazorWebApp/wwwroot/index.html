@@ -9,6 +9,36 @@
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
     <link href="BlazorWebApp.styles.css" rel="stylesheet" />
+
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.23/esri/themes/light/main.css">
+    <script src="https://js.arcgis.com/4.23/"></script>
+    <script>
+        require(["esri/config", "esri/Map", "esri/views/MapView"], function (esriConfig, Map, MapView) {
+            esriConfig.apiKey = "AAPK67d587eafb5c46c4aa6ffd3cd40bdb17tkAAPxj614aHsv67NfDbx1I77lsiBa5pSGUvYOvPqa2rr9OOE8T2PcYreAVrSTe-";
+
+            const map = new Map({
+                basemap: "arcgis-topographic" // Basemap layer service
+            });
+
+            const view = new MapView({
+                map: map,
+                center: [-118.805, 34.027], // Longitude, latitude
+                zoom: 13, // Zoom level
+                container: "viewDiv" // Div element
+            });
+        });
+    </script>
+
 </head>
 
 <body>
@@ -19,7 +49,9 @@
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
+    <div id="viewDiv"></div>
     <script src="_framework/blazor.webassembly.js"></script>
+
 </body>
 
 </html>
